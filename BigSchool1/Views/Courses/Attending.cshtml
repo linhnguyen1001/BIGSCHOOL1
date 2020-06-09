@@ -1,0 +1,77 @@
+﻿@model BigSchool1.ViewModels.CoursesViewModel
+@{
+    ViewBag.Title = "Attending";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Attending</h2>
+<ul class="course">
+    @foreach (var course in Model.UpcommingCourses)
+    {
+        <li>
+            <div class="date">
+                <div class="month">
+                    @course.DateTime.ToString("dd-MM")
+                    <small> @course.DateTime.ToString("yyyy")</small>
+                </div>
+                <div class="day">
+                    <small>@course.DateTime.ToString("HH:mm")</small>
+                </div>
+            </div>
+            <div class="details">
+                <span class="lecturer">
+                    @course.Lecturer.Name
+                    @if (Model.ShowAction)
+                    {
+                        <button class="btn btn-default btn-sm js-toggle-follow" data-user-id="@course.LecturerId">Follow</button>
+                    }
+                </span>
+                <span class="category">
+                    @course.Category.Name
+                </span>
+                <div class="action">
+                    <a href="#" class="js-cancel-course" data-course-id="@course.Id">No Going?</a>
+                </div>
+            </div>
+        </li>
+    }
+</ul>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            CoursesController.init();
+            $(".js-toggle-follow").click(function (e) {
+                var button = $(e.target);
+                $.post("/api/followings", { followeeId: button.attr("data-user-id") })
+                    .done(function () {
+                        button.text("Following");
+                    })
+                    .fail(function () {
+                        alert("Something failed!");
+                    });
+            });
+        });
+        $(document).ready(function () {
+            $(".js-cancel-course").click(function (e) {
+                e.preventDefault();
+                var link = $(e.target);
+                bootbox.confirm("Are you sure to cancel?",
+                    function () {
+                        $.ajax({
+                            url: "/api/attendances/" + link.attr("data-course-id"),
+                            method: "DELETE"
+                        })
+                        .done(function () {
+                            link.parents("li").fadeOut(function () {
+                                $(this).remove();
+                            });
+                        })
+                        .fail(function () {
+                            alert("Something Failed!");
+                        });
+                    });
+            });
+        });
+    </script>
+}

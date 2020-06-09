@@ -1,0 +1,62 @@
+﻿@model IEnumerable<BigSchool1.Models.ApplicationUser>
+@{
+    var useId = @User.Identity.GetUserId();
+    ViewBag.Title = "Following";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Microsoft.AspNet.Identity
+
+<h2>Following</h2>
+<div class="row" style="margin-top: 10px;">
+    <ul class="course">
+        @foreach (var follow in Model)
+        {
+            <li>
+                <div class="date">
+                    <div class="name">
+                        @follow.Name
+                    </div>
+                    <div class="user">
+                            @if (@follow.UserName == useId)
+                            {
+                                <span class="text-danger"> Đã theo dõi &#128572; &#128572; &#128572;</span>
+                            }
+                    </div>
+                </div>
+                <div class="details">
+                    <div><span class="text-danger">@follow.UserName</span></div>
+                </div>
+                <div class="action">
+                    <a href="#" class="js-cancel-course" data-course-id="@follow.Id">UnFollow</a>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-cancel-course").click(function (e) {
+                e.preventDefault();
+                var link = $(e.target);
+                bootbox.confirm("Are you sure to cancel?",
+                    function () {
+                        $.ajax({
+                            url: "/api/followings/" + link.attr("data-course-id"),
+                            method: "DELETE"
+                        })
+                        .done(function () {
+                            link.parents("li").fadeOut(function () {
+                                $(this).remove();
+                            });
+                        })
+                        .fail(function () {
+                            alert("Something Failed!");
+                        });
+                    });
+            });
+        });
+    </script>
+}
