@@ -19,12 +19,5 @@ namespace BigSchool1.Models
 
         public ApplicationUser Follower { get; set; }
         public ApplicationUser Followee { get; set; }
-        //
-        [Key]
-        [Column(Order = 1)]
-        public string FolloweeId { get; set; }
-
-        public ApplicationUser Follower { get; set; }
-        public ApplicationUser Followee { get; set; }
     }
 }
