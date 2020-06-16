@@ -35,5 +35,22 @@ namespace BigSchool1.ViewModels
         {
             return DateTime.Parse(string.Format("{0} {1}", Date, Time));
         }
+
+        //
+        public int Id { get; set; }
+
+        [Required]
+        public string Place { get; set; }
+
+        [Required]
+        [FutureDate]
+        public string Date { get; set; }
+
+        [Required]
+        [ValidTime]
+        public string Time { get; set; }
+
+        [Required]
+        public byte Category { get; set; }
     }
 }
